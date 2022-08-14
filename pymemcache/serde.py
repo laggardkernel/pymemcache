@@ -115,6 +115,7 @@ class PickleSerde:
         self._serialize_func = get_python_memcache_serializer(pickle_version)
 
     def serialize(self, key, value):
+        # CO(lk): returns (value, flags: int)
         return self._serialize_func(key, value)
 
     def deserialize(self, key, value, flags):

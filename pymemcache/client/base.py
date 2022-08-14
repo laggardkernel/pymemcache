@@ -135,6 +135,7 @@ def normalize_server_spec(server: ServerSpec) -> ServerSpec:
     else:
         parts = server.rsplit(":", 1)
         host, port = parts[0], int(parts[1])
+    # CO(lk): strip [] for IPv6 addresses
     if host.startswith("["):
         host = host.strip("[]")
     return (host, port)
@@ -360,7 +361,9 @@ class Client:
         if not isinstance(key_prefix, bytes):
             raise TypeError("key_prefix should be bytes.")
         self.key_prefix = key_prefix
+        # TODO(lk):
         self.default_noreply = default_noreply
+        # CO(lk): unicode key support defaults to False
         self.allow_unicode_keys = allow_unicode_keys
         self.encoding = encoding
         self.tls_context = tls_context
@@ -406,6 +409,7 @@ class Client:
         try:
             sock.settimeout(self.connect_timeout)
             if self.socket_keepalive is not None:
+                # CO(lk): enable socket keepalive (linux only) and configure it
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
                 sock.setsockopt(
                     socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, self.socket_keepalive.idle
@@ -603,6 +607,7 @@ class Client:
           the key didn't exist, False if it existed but had a different cas
           value and True if it existed and was changed.
         """
+        # CO(lk): cas is the expected existing token
         cas = self._check_cas(cas)
         return self._store_cmd(
             b"cas", {key: value}, expire, noreply, flags=flags, cas=cas

@@ -42,6 +42,7 @@ class ObjectPool:
         if not isinstance(max_size, int) or max_size < 0:
             raise ValueError('"max_size" must be a positive integer')
         self.max_size = max_size
+        # CO(lk): idle_timeout means there's recycle mechanism
         self.idle_timeout = idle_timeout
         self._idle_clock = time.time if idle_timeout else int
 

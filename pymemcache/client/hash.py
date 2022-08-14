@@ -214,6 +214,7 @@ class HashClient:
         # Connecting to the server fail, we should enter
         # retry mode
         except OSError:
+            # CO(lk): record retry info
             self._mark_failed_server(client.server)
 
             # if we haven't enabled ignore_exc, don't move on gracefully, just

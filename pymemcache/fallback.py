@@ -46,6 +46,7 @@ Best Practices:
 class FallbackClient:
     def __init__(self, caches):
         assert len(caches) > 0
+        # CO(lk): .caches is memcached clients we dispatches to.
         self.caches = caches
 
     def close(self):
